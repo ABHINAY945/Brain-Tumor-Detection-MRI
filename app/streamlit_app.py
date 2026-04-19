@@ -1,0 +1,163 @@
+import streamlit as st
+import tensorflow as tf
+import numpy as np
+import cv2
+from PIL import Image
+import os
+import sys
+
+
+# Page Config
+
+st.set_page_config(
+    page_title="Brain Tumor Detection",
+    page_icon="🧠",
+    layout="centered"
+)
+
+
+st.markdown("""
+<style>
+.main-title {
+    text-align: center;
+    font-size: 40px;
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.result-box {
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.success-box {
+    background-color: #e6ffe6;
+    color: #2e7d32;
+}
+
+.error-box {
+    background-color: #ffe6e6;
+    color: #c62828;
+}
+
+.confidence-text {
+    font-size: 18px;
+    text-align: center;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
+# Adding project root to path
+
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(BASE_DIR)
+
+from src.preprocessing import preprocess_detection_image, preprocess_mat_image
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+
+
+# Load Models
+
+@st.cache_resource
+def load_models():
+    detection_model = tf.keras.models.load_model(
+        os.path.join(BASE_DIR, "models", "tumor_detection_model.keras"),
+        custom_objects={"preprocess_input": preprocess_input}
+    )
+
+    type_model = tf.keras.models.load_model(
+        os.path.join(BASE_DIR, "models", "tumor_type_model.keras")
+    )
+
+    return detection_model, type_model
+
+
+model_det, model_type = load_models()
+
+
+# Header
+
+st.markdown("<div class='main-title'>🧠 Brain Tumor Detection</div>", unsafe_allow_html=True)
+st.markdown("---")
+st.info("Upload an MRI image and click Predict")
+
+
+# Upload Section
+
+uploaded_file = st.file_uploader("📤 Upload MRI Image", type=["jpg", "png", "jpeg"])
+
+if uploaded_file is not None:
+
+    image = Image.open(uploaded_file)
+
+    col1, col2 = st.columns([1, 1])
+
+    with col1:
+        st.image(image, caption="Uploaded Image", use_container_width=True)
+
+    img = np.array(image)
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+
+    with col2:
+        st.markdown("### Prediction Panel")
+
+        if st.button("🔍 Predict"):
+
+            
+            # Detection
+            
+            img_det = preprocess_detection_image(img)
+            img_det = img_det.reshape(1, 224, 224, 3)
+
+            pred_det = model_det.predict(img_det)
+            prediction = float(pred_det[0][0])
+
+            confidence = prediction if prediction > 0.5 else (1 - prediction)
+
+            
+            # Confidence Meter
+           
+            st.progress(int(confidence * 100))
+            st.markdown(
+                f"<div class='confidence-text'>Confidence: {confidence*100:.2f}%</div>",
+                unsafe_allow_html=True
+            )
+
+           
+            # Result Display
+          
+            if prediction > 0.5:
+
+                st.markdown(
+                    "<div class='result-box error-box'>⚠️ Tumor Detected</div>",
+                    unsafe_allow_html=True
+                )
+
+               
+                # Classification
+              
+                img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                img_type = preprocess_mat_image(img_gray)
+                img_type = img_type.reshape(1, 224, 224, 1)
+
+                pred_type = model_type.predict(img_type)
+                class_idx = np.argmax(pred_type)
+
+                classes = ["Glioma", "Meningioma", "Pituitary"]
+
+                st.markdown(
+                    f"<div class='result-box success-box'>🧬 {classes[class_idx]}</div>",
+                    unsafe_allow_html=True
+                )
+
+            else:
+                st.markdown(
+                    "<div class='result-box success-box'>✅ No Tumor Detected</div>",
+                    unsafe_allow_html=True
+                )
+
+# streamlit run app/streamlit_app.py
