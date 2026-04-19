@@ -6,6 +6,32 @@ from PIL import Image
 import os
 import sys
 
+# for models 
+import gdown
+import os
+
+def download_models():
+    if not os.path.exists("models"):
+        os.makedirs("models")
+
+    # Detection model
+    if not os.path.exists("models/tumor_detection_model.keras"):
+        gdown.download(
+            "https://drive.google.com/drive/u/3/folders/1AhzYeVl13vbyo7OjtD3pNNuSmkteWz5q",
+            "models/tumor_detection_model.keras",
+            quiet=False
+        )
+
+    # Classification model
+    if not os.path.exists("models/tumor_type_model.keras"):
+        gdown.download(
+            "https://drive.google.com/drive/u/3/folders/1AhzYeVl13vbyo7OjtD3pNNuSmkteWz5q",
+            "models/tumor_type_model.keras",
+            quiet=False
+        )
+
+download_models()
+
 
 # Page Config
 
@@ -159,5 +185,8 @@ if uploaded_file is not None:
                     "<div class='result-box success-box'>✅ No Tumor Detected</div>",
                     unsafe_allow_html=True
                 )
+
+
+
 
 # streamlit run app/streamlit_app.py
