@@ -18,10 +18,9 @@ def download_models():
     if not os.path.exists(det_path):
         gdown.download(
             "https://drive.google.com/uc?id=1hJOS6rqUalQlYPpH3bIJW-kKowYx5ZPR",
-            det_path,
+            "models/tumor_detection_model.keras",
             quiet=False
         )
-
 
 
     # Classification model
@@ -29,7 +28,7 @@ def download_models():
     if not os.path.exists(cls_path):
         gdown.download(
             "https://drive.google.com/uc?id=1exsDaUEdrBCV7Q93TRx7GSJ2206lNxrl",
-            cls_path,
+            "models/tumor_type_model.keras",
             quiet=False
         )
 
