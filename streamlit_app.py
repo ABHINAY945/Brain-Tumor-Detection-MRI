@@ -1,5 +1,9 @@
 import streamlit as st
+import os
+os.environ["TF_USE_LEGACY_KERAS"] = "1"
+
 import tensorflow as tf
+
 import numpy as np
 import cv2
 from PIL import Image
@@ -12,7 +16,7 @@ import sys
 
 
 import requests
-import os
+
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 def download_file(file_id, destination):
     URL = "https://drive.google.com/uc?export=download"
@@ -109,13 +113,12 @@ def load_models():
     download_models()
     detection_model = tf.keras.models.load_model(
         os.path.join(BASE_DIR, "models", "tumor_detection_model.keras"),
-        custom_objects={"preprocess_input": preprocess_input},
-        compile=False   
+        compile=False
     )
 
     type_model = tf.keras.models.load_model(
         os.path.join(BASE_DIR, "models", "tumor_type_model.keras"),
-        compile=False   
+        compile=False
     )
 
     return detection_model, type_model
