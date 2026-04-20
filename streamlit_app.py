@@ -9,28 +9,21 @@ import sys
 # for models 
 # detection =   https://drive.google.com/file/d/1hJOS6rqUalQlYPpH3bIJW-kKowYx5ZPR/view?usp=sharing
 # type =        https://drive.google.com/file/d/1exsDaUEdrBCV7Q93TRx7GSJ2206lNxrl/view?usp=sharing
+
 import gdown
-import os
-
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 def download_models():
-    os.makedirs("models", exist_ok=True)
+    model_dir = os.path.join(BASE_DIR, "models")
+    os.makedirs(model_dir, exist_ok=True)
 
-    DETECTION_PATH = "models/tumor_detection_model.keras"
-    CLASS_PATH = "models/tumor_type_model.keras"
+    det_path = os.path.join(model_dir, "tumor_detection_model.keras")
+    cls_path = os.path.join(model_dir, "tumor_type_model.keras")
 
-    if not os.path.exists(DETECTION_PATH):
-        gdown.download(
-            "https://drive.google.com/uc?id=1hJOS6rqUalQlYPpH3bIJW-kKowYx5ZPR",
-            DETECTION_PATH,
-            quiet=False
-        )
+    if not os.path.exists(det_path):
+        gdown.download(id="1hJOS6rqUalQlYPpH3bIJW-kKowYx5ZPR", output=det_path, quiet=False)
 
-    if not os.path.exists(CLASS_PATH):
-        gdown.download(
-            "https://drive.google.com/uc?id=1exsDaUEdrBCV7Q93TRx7GSJ2206lNxrl",
-            CLASS_PATH,
-            quiet=False
-        )
+    if not os.path.exists(cls_path):
+        gdown.download(id="1exsDaUEdrBCV7Q93TRx7GSJ2206lNxrl", output=cls_path, quiet=False)
 
 download_models()
 
@@ -85,7 +78,7 @@ st.markdown("""
 
 # Adding project root to path
 
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+# BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(BASE_DIR)
 
 from src.preprocessing import preprocess_detection_image, preprocess_mat_image
