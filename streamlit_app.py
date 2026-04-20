@@ -7,32 +7,36 @@ import os
 import sys
 
 # for models 
+# detection =   https://drive.google.com/file/d/1hJOS6rqUalQlYPpH3bIJW-kKowYx5ZPR/view?usp=sharing
+# type =        https://drive.google.com/file/d/1exsDaUEdrBCV7Q93TRx7GSJ2206lNxrl/view?usp=sharing
 import gdown
 import os
 
 def download_models():
     os.makedirs("models", exist_ok=True)
 
-    # Detection model
-    det_path = "models/tumor_detection_model.keras"
-    if not os.path.exists(det_path):
+    DETECTION_PATH = "models/tumor_detection_model.keras"
+    CLASS_PATH = "models/tumor_type_model.keras"
+
+    if not os.path.exists(DETECTION_PATH):
         gdown.download(
             "https://drive.google.com/uc?id=1hJOS6rqUalQlYPpH3bIJW-kKowYx5ZPR",
-            "models/tumor_detection_model.keras",
+            DETECTION_PATH,
             quiet=False
         )
 
-
-    # Classification model
-    cls_path = "models/tumor_type_model.keras"
-    if not os.path.exists(cls_path):
+    if not os.path.exists(CLASS_PATH):
         gdown.download(
             "https://drive.google.com/uc?id=1exsDaUEdrBCV7Q93TRx7GSJ2206lNxrl",
-            "models/tumor_type_model.keras",
+            CLASS_PATH,
             quiet=False
         )
 
 download_models()
+
+
+
+
 
 
 # Page Config
