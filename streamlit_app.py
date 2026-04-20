@@ -109,11 +109,13 @@ def load_models():
     download_models()
     detection_model = tf.keras.models.load_model(
         os.path.join(BASE_DIR, "models", "tumor_detection_model.keras"),
-        custom_objects={"preprocess_input": preprocess_input}
+        custom_objects={"preprocess_input": preprocess_input},
+        compile=False   
     )
 
     type_model = tf.keras.models.load_model(
-        os.path.join(BASE_DIR, "models", "tumor_type_model.keras")
+        os.path.join(BASE_DIR, "models", "tumor_type_model.keras"),
+        compile=False   
     )
 
     return detection_model, type_model
