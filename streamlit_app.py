@@ -3,15 +3,36 @@ import tensorflow as tf
 import numpy as np
 import cv2
 from PIL import Image
-import os
 import sys
 
 # for models 
 # detection =   https://drive.google.com/file/d/1hJOS6rqUalQlYPpH3bIJW-kKowYx5ZPR/view?usp=sharing
 # type =        https://drive.google.com/file/d/1exsDaUEdrBCV7Q93TRx7GSJ2206lNxrl/view?usp=sharing
 
-import gdown
+
+
+import requests
+import os
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+def download_file(file_id, destination):
+    URL = "https://drive.google.com/uc?export=download"
+    
+    session = requests.Session()
+    response = session.get(URL, params={'id': file_id}, stream=True)
+
+    if response.status_code != 200:
+        raise Exception("Download failed. Check file permissions.")
+
+    for key, value in response.cookies.items():
+        if key.startswith('download_warning'):
+            response = session.get(URL, params={'id': file_id, 'confirm': value}, stream=True)
+            break
+
+    with open(destination, "wb") as f:
+        for chunk in response.iter_content(32768):
+            if chunk:
+                f.write(chunk)
+
 def download_models():
     model_dir = os.path.join(BASE_DIR, "models")
     os.makedirs(model_dir, exist_ok=True)
@@ -20,14 +41,10 @@ def download_models():
     cls_path = os.path.join(model_dir, "tumor_type_model.keras")
 
     if not os.path.exists(det_path):
-        gdown.download(id="1hJOS6rqUalQlYPpH3bIJW-kKowYx5ZPR", output=det_path, quiet=False)
+        download_file("1hJOS6rqUalQlYPpH3bIJW-kKowYx5ZPR", det_path)
 
     if not os.path.exists(cls_path):
-        gdown.download(id="1exsDaUEdrBCV7Q93TRx7GSJ2206lNxrl", output=cls_path, quiet=False)
-
-download_models()
-
-
+        download_file("1exsDaUEdrBCV7Q93TRx7GSJ2206lNxrl", cls_path)
 
 
 
@@ -89,6 +106,7 @@ from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
 @st.cache_resource
 def load_models():
+    download_models()
     detection_model = tf.keras.models.load_model(
         os.path.join(BASE_DIR, "models", "tumor_detection_model.keras"),
         custom_objects={"preprocess_input": preprocess_input}
