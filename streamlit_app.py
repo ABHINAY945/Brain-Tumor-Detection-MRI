@@ -11,22 +11,25 @@ import gdown
 import os
 
 def download_models():
-    if not os.path.exists("models"):
-        os.makedirs("models")
+    os.makedirs("models", exist_ok=True)
 
     # Detection model
-    if not os.path.exists("models/tumor_detection_model.keras"):
+    det_path = "models/tumor_detection_model.keras"
+    if not os.path.exists(det_path):
         gdown.download(
-            "https://drive.google.com/drive/u/3/folders/1AhzYeVl13vbyo7OjtD3pNNuSmkteWz5q",
-            "models/tumor_detection_model.keras",
+            "https://drive.google.com/uc?id=1hJOS6rqUalQlYPpH3bIJW-kKowYx5ZPR",
+            det_path,
             quiet=False
         )
 
+
+
     # Classification model
-    if not os.path.exists("models/tumor_type_model.keras"):
+    cls_path = "models/tumor_type_model.keras"
+    if not os.path.exists(cls_path):
         gdown.download(
-            "https://drive.google.com/drive/u/3/folders/1AhzYeVl13vbyo7OjtD3pNNuSmkteWz5q",
-            "models/tumor_type_model.keras",
+            "https://drive.google.com/uc?id=1exsDaUEdrBCV7Q93TRx7GSJ2206lNxrl",
+            cls_path,
             quiet=False
         )
 
