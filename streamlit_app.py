@@ -189,4 +189,4 @@ if uploaded_file is not None:
 
 
 
-# streamlit run app/streamlit_app.py
+# streamlit run streamlit_app.py
