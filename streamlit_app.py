@@ -1,6 +1,5 @@
 import streamlit as st
 import os
-os.environ["TF_USE_LEGACY_KERAS"] = "1"
 
 import tensorflow as tf
 
@@ -10,8 +9,8 @@ from PIL import Image
 import sys
 
 # for models 
-# detection =   https://drive.google.com/file/d/1hJOS6rqUalQlYPpH3bIJW-kKowYx5ZPR/view?usp=sharing
-# type =        https://drive.google.com/file/d/1exsDaUEdrBCV7Q93TRx7GSJ2206lNxrl/view?usp=sharing
+# detection =   https://drive.google.com/file/d/1EzN6co3Ig7QfgF6WTktkWfmj4RTWQEg0/view?usp=sharing
+# type =        https://drive.google.com/file/d/1v_8STwRZx-09zuzFXUWm7c7pcj3xt6og/view?usp=sharing
 
 
 
@@ -45,10 +44,10 @@ def download_models():
     cls_path = os.path.join(model_dir, "tumor_type_model.keras")
 
     if not os.path.exists(det_path):
-        download_file("1hJOS6rqUalQlYPpH3bIJW-kKowYx5ZPR", det_path)
+        download_file("1EzN6co3Ig7QfgF6WTktkWfmj4RTWQEg0", det_path)
 
     if not os.path.exists(cls_path):
-        download_file("1exsDaUEdrBCV7Q93TRx7GSJ2206lNxrl", cls_path)
+        download_file("1v_8STwRZx-09zuzFXUWm7c7pcj3xt6og", cls_path)
 
 
 
